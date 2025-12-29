@@ -82,20 +82,6 @@ app.include_router(posts.router)
 app.include_router(admin.router)
 
 
-@app.get("/")
-def root():
-    """Root endpoint with API information"""
-    return {
-        "message": "Welcome to Blog API",
-        "version": "1.0.0",
-        "docs": "/docs",
-        "endpoints": {
-            "authentication": "/auth",
-            "users": "/users",
-            "posts": "/posts",
-            "admin": "/admin"
-        }
-    }
 @app.get("/health")
 def health_check():
     return {"status": "healthy", "environment": settings.ENVIRONMENT}
