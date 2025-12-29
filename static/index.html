@@ -379,7 +379,7 @@
     </div>
 
     <script>
-        const API_URL = 'http://127.0.0.1:8000';
+        const API_URL = 'https://blog-api-web-li4k.onrender.com';
         let token = localStorage.getItem('token');
         let currentUser = null;
         let currentView = 'all';
@@ -466,19 +466,19 @@
             }
         }
 
-function logout() {
-    token = null;
-    currentUser = null;
-    localStorage.removeItem('token');
-    updateAuthUI();
+        function logout() {
+            token = null;
+            currentUser = null;
+            localStorage.removeItem('token');
+            updateAuthUI();
 
-    document.getElementById('postsContainer').innerHTML = `
+            document.getElementById('postsContainer').innerHTML = `
         <div class="empty-state">
             <h2>You are logged out</h2>
             <p>Please login to view posts</p>
         </div>
     `;
-}
+        }
 
         function updateAuthUI() {
             const authSection = document.getElementById('authSection');
@@ -500,51 +500,53 @@ function logout() {
         }
 
         // Post Functions
- async function loadPosts(view) {
-    currentView = view;
-    const container = document.getElementById('postsContainer');
+        async function loadPosts(view) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event?.target?.classList.add('active');
+            currentView = view;
+            const container = document.getElementById('postsContainer');
 
-    // 🚫 Not logged in → show message (no API call)
-    if (!token) {
-        container.innerHTML = `
+            // 🚫 Not logged in → show message (no API call)
+            if (!token) {
+                container.innerHTML = `
             <div class="empty-state">
                 <h2>Please login</h2>
                 <p>Login to view posts</p>
             </div>
         `;
-        return;
-    }
-
-    container.innerHTML = '<div class="loader">Loading posts...</div>';
-
-    try {
-        let url = `${API_URL}/posts`;
-
-        if (view === 'my' && currentUser) {
-            url += `?author_id=${currentUser.id}`;
-        }
-
-        const response = await fetch(url, {
-            headers: {
-                'Authorization': `Bearer ${token}`
+                return;
             }
-        });
 
-        if (!response.ok) throw new Error("Unauthorized");
+            container.innerHTML = '<div class="loader">Loading posts...</div>';
 
-        const posts = await response.json();
+            try {
+                let url = `${API_URL}/posts`;
 
-        if (posts.length === 0) {
-            container.innerHTML = `
+                if (view === 'my' && currentUser) {
+                    url += `?author_id=${currentUser.id}`;
+                }
+
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) throw new Error("Unauthorized");
+
+                const posts = await response.json();
+
+                if (posts.length === 0) {
+                    container.innerHTML = `
                 <div class="empty-state">
                     <h2>No posts yet</h2>
                     <p>${view === 'my' ? 'Create your first post!' : 'Be the first to create a post!'}</p>
                 </div>
             `;
-            return;
-        }
+                    return;
+                }
 
-        container.innerHTML = posts.map(post => `
+                container.innerHTML = posts.map(post => `
             <div class="post-card">
                 <div class="post-title">${post.title}</div>
 
@@ -557,8 +559,8 @@ function logout() {
                     <span>👁️ ${post.views} views</span>
                     <span>
                         ${post.is_published
-                            ? '<span class="badge published">Published</span>'
-                            : '<span class="badge draft">Draft</span>'}
+                        ? '<span class="badge published">Published</span>'
+                        : '<span class="badge draft">Draft</span>'}
                     </span>
                 </div>
 
@@ -583,14 +585,14 @@ function logout() {
             </div>
         `).join('');
 
-    } catch (error) {
-        container.innerHTML = `
+            } catch (error) {
+                container.innerHTML = `
             <div class="empty-state">
                 <h2>Failed to load posts</h2>
             </div>
         `;
-    }
-}
+            }
+        }
 
         async function savePost(e) {
             e.preventDefault();
