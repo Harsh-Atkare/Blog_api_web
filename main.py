@@ -44,7 +44,7 @@ models.Base.metadata.create_all(bind=engine)
 # CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://blog-api-web-li4k.onrender.com/"],  # In production: specify exact origins
+    allow_origins=["https://blog-api-web-li4k.onrender.com"],  # In production: specify exact origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -81,10 +81,6 @@ app.include_router(users.router)
 app.include_router(posts.router)
 app.include_router(admin.router)
 
-
-@app.get("/health")
-def health_check():
-    return {"status": "healthy", "environment": settings.ENVIRONMENT}
 
 @app.get("/health")
 def health_check():
